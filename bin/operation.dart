@@ -9,23 +9,18 @@ class FileOperation {
       String currentDirectory = Directory.current.path;
       String filePath = '$currentDirectory/bin/$fileName';
       File file = File(filePath);
-
-      // Check if the file exists
       if (!file.existsSync()) {
         throw Exception('File not found: $filePath');
       }
 
-      // Read the contents of the file
       String contents = file.readAsStringSync();
 
-      // Decode the JSON data
       Map<String, dynamic> jsonData = jsonDecode(contents);
 
       return jsonData;
     } catch (e) {
       print('Error reading JSON file: $e');
-      return jsonDecode(
-          "error: something went wrong $e"); // Or handle the error according to your needs
+      return jsonDecode("error: something went wrong $e");
     }
   }
 
@@ -40,10 +35,8 @@ class FileOperation {
 
       String contents = file.readAsStringSync();
 
-      // Decode the JSON data
       Map<String, dynamic> jsonData = jsonDecode(contents);
 
-      // Find and remove the object with the specified ID
       if (jsonData.containsKey("products") && jsonData["products"] is List) {
         (jsonData["products"] as List)
             .removeWhere((product) => product["productId"] == objectIdToRemove);
