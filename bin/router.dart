@@ -74,7 +74,7 @@ class MyRouter {
         String requestBody = await req.readAsString();
         Map<String, dynamic> jsonBody =
             operation.addAddressJsonFile('address.json', requestBody);
-        print('data provided: ${jsonBody['userInput']}');
+        print('data provided: $jsonBody');
         return Response.ok(jsonEncode(jsonBody),
             headers: {'content-type': 'application/json'});
       } catch (e) {

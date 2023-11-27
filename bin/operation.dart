@@ -57,6 +57,7 @@ class FileOperation {
         }));
       }
       Map<String, dynamic> jsonData = jsonDecode(requestBody);
+      file.writeAsStringSync(jsonEncode(jsonData));
       return jsonData;
     } catch (e) {
       return jsonDecode("error: something went wrong $e");
