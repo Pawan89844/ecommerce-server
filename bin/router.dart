@@ -27,8 +27,9 @@ class MyRouter {
   final APIs _apIs = APIs();
   final FileOperation operation = FileOperation();
 
-  Object myJson(String filename) {
-    Map<String, dynamic> myOperation = operation.readJsonFile(filename);
+  Object myJson(String filename, {Object? obj}) {
+    Map<String, dynamic> myOperation =
+        operation.readJsonFile(filename, object: obj);
     return jsonEncode(myOperation);
   }
 
@@ -55,7 +56,14 @@ class MyRouter {
 
   Response getAddress(Request req) {
     return Response.ok(
-      myJson('address.json'),
+      myJson('address.json', obj: {
+        "id": 1,
+        "userId": 1,
+        "address": [
+          {"id": 2, "name": "Pawan", "address": "B-58", "phone": 6464465456},
+          {"id": 3, "name": "Pawan", "address": "B-62", "phone": 545512556}
+        ]
+      }),
       headers: {'content-type': 'application/json'},
     );
   }

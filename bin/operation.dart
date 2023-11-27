@@ -4,21 +4,25 @@ import 'dart:io';
 import 'package:shelf/shelf.dart';
 
 class FileOperation {
-  Map<String, dynamic> readJsonFile(String fileName) {
+  Map<String, dynamic> readJsonFile(String fileName, {Object? object}) {
     try {
       String currentDirectory = Directory.current.path;
       String filePath = '$currentDirectory/bin/$fileName';
       File file = File(filePath);
       if (!file.existsSync()) {
         file.createSync(recursive: true);
-        file.writeAsStringSync(jsonEncode({
-          "id": 1,
-          "userId": 1,
-          "address": [
-            {"id": 2, "name": "Pawan", "address": "B-58", "phone": 6464465456},
-            {"id": 3, "name": "Pawan", "address": "B-62", "phone": 545512556}
-          ]
-        }));
+        file.writeAsStringSync(jsonEncode(object ??
+            {
+              "id": 1,
+              "userId": 1,
+              "date": "2020-03-02T00:00:00.000Z",
+              "products": [
+                {"productId": 1, "quantity": 4},
+                {"productId": 2, "quantity": 1},
+                {"productId": 3, "quantity": 6}
+              ],
+              "__v": 0
+            }));
       }
 
       String contents = file.readAsStringSync();
