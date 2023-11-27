@@ -14,13 +14,10 @@ class FileOperation {
         file.writeAsStringSync(jsonEncode({
           "id": 1,
           "userId": 1,
-          "date": "2020-03-02T00:00:00.000Z",
-          "products": [
-            {"productId": 1, "quantity": 4},
-            {"productId": 2, "quantity": 1},
-            {"productId": 3, "quantity": 6}
-          ],
-          "__v": 0
+          "address": [
+            {"id": 2, "name": "Pawan", "address": "B-58", "phone": 6464465456},
+            {"id": 3, "name": "Pawan", "address": "B-62", "phone": 545512556}
+          ]
         }));
       }
 
