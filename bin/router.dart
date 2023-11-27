@@ -1,6 +1,7 @@
 // ignore_for_file: subtype_of_sealed_class
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
@@ -16,14 +17,18 @@ Router router = Router()
   ..delete('/cart/deletProduct', myRouter.deleteProduct)
   ..post('/cart/addToCart', myRouter.addProduct)
   ..post('/cart/addToCartByOne', myRouter.addProductByOne)
-  ..post('/cart/removeToCartByOne', myRouter.removeProductByOne);
+  ..post('/cart/removeToCartByOne', myRouter.removeProductByOne)
+  ..get('/getAddress', myRouter.getAddress)
+  ..post('/addAddress', myRouter.addAddress)
+  ..delete('/deleteAddress', myRouter.deleteAddress)
+  ..put('/updateAdress', myRouter.updateAddress);
 
 class MyRouter {
   final APIs _apIs = APIs();
   final FileOperation operation = FileOperation();
 
-  Object myJson() {
-    Map<String, dynamic> myOperation = operation.readJsonFile('cart.json');
+  Object myJson(String filename) {
+    Map<String, dynamic> myOperation = operation.readJsonFile(filename);
     return jsonEncode(myOperation);
   }
 
@@ -44,7 +49,61 @@ class MyRouter {
   }
 
   Response cart(Request req) {
-    return Response.ok(myJson(), headers: {'content-type': 'application/json'});
+    return Response.ok(myJson('cart.json'),
+        headers: {'content-type': 'application/json'});
+  }
+
+  Response getAddress(Request req) {
+    return Response.ok(
+      myJson('address.json'),
+      headers: {'content-type': 'application/json'},
+    );
+  }
+
+  Future<Response> addAddress(Request req) async {
+    if (req.method == 'POST') {
+      try {
+        String requestBody = await req.readAsString();
+        Map<String, dynamic> jsonBody =
+            operation.addAddressJsonFile('address.json', requestBody);
+        print('data provided: ${jsonBody['userInput']}');
+        return Response.ok(jsonEncode(jsonBody),
+            headers: {'content-type': 'application/json'});
+      } catch (e) {
+        print('Error $e');
+        return Response.badRequest(body: 'Error $e');
+      }
+    } else {
+      return Response.internalServerError(body: 'Server Error');
+    }
+  }
+
+  Future<Response> updateAddress(Request req) async {
+    Map<String, dynamic> queryParams = req.url.queryParameters;
+    int? id = int.tryParse(queryParams['id'].toString());
+    if (id == null) {
+      return Response.badRequest(body: 'Oop! id not found');
+    } else {
+      String? newAddress = queryParams['address'];
+      int? newPhone = int.tryParse(queryParams['phone'].toString());
+      String? newName = queryParams['name'];
+
+      String res = await operation.updateAddress(
+          'address.json', id, newAddress, newPhone, newName);
+
+      return Response.ok(res, headers: {'content-type': 'application/json'});
+    }
+  }
+
+  Response deleteAddress(Request req) {
+    int? id = int.tryParse(req.url.queryParameters['id'].toString());
+    if (id == null) {
+      return Response.badRequest(
+          body: "error", headers: {'content-type': 'application/json'});
+    } else {
+      return Response.ok(operation.deleteAddress('address.json', id),
+          headers: {'content-type': 'application/json'});
+    }
   }
 
   Response deleteProduct(Request req) {
